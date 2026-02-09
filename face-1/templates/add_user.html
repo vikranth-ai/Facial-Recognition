@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add New User</title>
+</head>
+<body>
+    <h2>Add New User</h2>
+    <form id="addUserForm" method="POST" action="/add">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="id">ID:</label><br>
+        <input type="text" id="id" name="id" required><br><br>
+
+        <input type="hidden" id="image" name="image">
+        <input type="submit" value="Capture & Save Face">
+    </form>
+
+    <video id="video" width="400" height="300" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const imageInput = document.getElementById('image');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                alert('Error accessing webcam: ' + err);
+            });
+
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const imageData = canvas.toDataURL('image/jpeg');
+            imageInput.value = imageData;
+
+            this.submit();
+        });
+    </script>
+</body>
+</html>
+
